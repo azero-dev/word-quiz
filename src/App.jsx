@@ -6,6 +6,7 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [wordMode, setWordMode] = useState("");
   const [wordApi, setWordApi] = useState("");
+  const [wordReady, setWordReady] = useState(false);
   const [synAnt, setSynAnt] = useState({});
   const [inputWord, setInputWord] = useState("");
 
@@ -15,6 +16,7 @@ function App() {
 
   const selectWordMode = () => {
     reset();
+    setWordReady(false);
     const random = Math.floor(Math.random() * 2);
     setWordMode(random === 0 ? "synonyms" : "antonyms");
     handleFetchRandomWord();
@@ -38,7 +40,8 @@ function App() {
     fetchSynonymsAndAntonyms(word).then((data) => {
       if (data.synonyms.length > 0 && data.antonyms.length > 0) {
         setSynAnt(data);
-        // console.log("fetchSynonymsAndAntonyms", data);
+        setWordReady(true);
+        console.log("Yes, you can see the correct answer here: ", data);
       } else {
         handleFetchRandomWord();
       }
@@ -54,7 +57,7 @@ function App() {
       alert("Correct!");
       selectWordMode();
     } else {
-      alert("Try again!");
+      alert("Oops! wrong answer. Try again!");
       // console.log(synAnt[wordMode]);
       selectWordMode();
     }
@@ -69,12 +72,14 @@ function App() {
 
       {!gameStarted
         ? null
-        : (<p>Guess this word&apos;s {wordMode}:</p>)
+        : (<p>Guess this word&apos;s <span style={{textDecoration: "underline"}}>{wordMode}</span>:</p>)
       }
 
-      {<p>{wordApi}</p>}
+      {!wordReady && gameStarted
+        ? (<p>Searching for complex word...</p>)
+        : (<p>{wordApi}</p>)}
 
-      {!gameStarted
+      {!wordReady && !gameStarted
         ? null
         : (
           <form onSubmit={submitWord}>

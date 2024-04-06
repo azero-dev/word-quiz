@@ -8,23 +8,23 @@ function App() {
   const [wordApi, setWordApi] = useState("");
   const [synAnt, setSynAnt] = useState({});
   const [inputWord, setInputWord] = useState("");
-  
+
   const reset = () => {
-    setInputWord("")
-  }
+    setInputWord("");
+  };
 
   const selectWordMode = () => {
-    reset()
-    const random = Math.floor(Math.random() * 2)
-    setWordMode(random === 0 ? "synonyms" : "antonyms")
-    handleFetchRandomWord()
-  }
+    reset();
+    const random = Math.floor(Math.random() * 2);
+    setWordMode(random === 0 ? "synonyms" : "antonyms");
+    handleFetchRandomWord();
+  };
 
   const handleGameStart = () => {
-    setGameStarted(true)
-    selectWordMode()
+    setGameStarted(true);
+    selectWordMode();
   };
-  
+
   // Fecth the word
   const handleFetchRandomWord = () => {
     fetchRandomWord().then((data) => {
@@ -38,7 +38,7 @@ function App() {
     fetchSynonymsAndAntonyms(word).then((data) => {
       if (data.synonyms.length > 0 && data.antonyms.length > 0) {
         setSynAnt(data);
-        console.log("fetchSynonymsAndAntonyms", data);
+        // console.log("fetchSynonymsAndAntonyms", data);
       } else {
         handleFetchRandomWord();
       }
@@ -48,29 +48,46 @@ function App() {
   // Submit the word from form
   const submitWord = (event) => {
     event.preventDefault();
-    console.log("submitWord", inputWord, synAnt[wordMode]);
+    // console.log("submitWord", inputWord, synAnt[wordMode]);
 
     if (synAnt[wordMode].includes(inputWord)) {
       alert("Correct!");
       selectWordMode();
     } else {
       alert("Try again!");
-      console.log(synAnt[wordMode]);
+      // console.log(synAnt[wordMode]);
       selectWordMode();
     }
   };
 
   return (
     <>
-      {!gameStarted ? (<button onClick={handleGameStart}>Start game</button>) : null}
-      {!gameStarted ? null : (<p>Guess this word&apos;s {wordMode}:</p>)}
-      {wordApi}
-      <form onSubmit={submitWord}>
-        <input type="text" name="query" onChange={e => setInputWord(e.target.value)} />
-        <button type="submit">Go!</button>
-      </form>
+      {!gameStarted
+        ? (<button onClick={handleGameStart}>Start game</button>) 
+        : null
+      }
+
+      {!gameStarted
+        ? null
+        : (<p>Guess this word&apos;s {wordMode}:</p>)
+      }
+
+      {<p>{wordApi}</p>}
+
+      {!gameStarted
+        ? null
+        : (
+          <form onSubmit={submitWord}>
+            <input
+              type="text"
+              name="query"
+              onChange={(e) => setInputWord(e.target.value)}
+            />
+            <button type="submit">Go!</button>
+          </form>
+        )}
     </>
-  )
+  );
 }
 
 export default App;

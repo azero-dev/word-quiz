@@ -1,42 +1,76 @@
 import { useState } from "react";
 import "./App.css";
+import { fetchRandomWord, fetchSynonymsAndAntonyms } from "./Api";
 
 function App() {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [wordMode, setWordMode] = useState("");
   const [wordApi, setWordApi] = useState("");
   const [synAnt, setSynAnt] = useState({});
+  const [inputWord, setInputWord] = useState("");
+  
+  const reset = () => {
+    setInputWord("")
+  }
 
-  const urlWord = "https://api.api-ninjas.com/v1/randomword";
-  const options = {
-    method: "GET",
-    headers: { "X-Api-Key": import.meta.env.VITE_APP_API_KEY },
+  const selectWordMode = () => {
+    reset()
+    const random = Math.floor(Math.random() * 2)
+    setWordMode(random === 0 ? "synonyms" : "antonyms")
+    handleFetchRandomWord()
+  }
+
+  const handleGameStart = () => {
+    setGameStarted(true)
+    selectWordMode()
+  };
+  
+  // Fecth the word
+  const handleFetchRandomWord = () => {
+    fetchRandomWord().then((data) => {
+      setWordApi(data.word);
+      handleFetchSynonymsAndAntonyms(data.word);
+    });
   };
 
-  const setArray = (word) => {
-    const urlSynAnt = `https://api.api-ninjas.com/v1/thesaurus?word=${word}`;
-    fetch(urlSynAnt, options)
-      .then((response) => response.json())
-      .then((data) => {
+  // Fetch the synonyms and antonyms
+  const handleFetchSynonymsAndAntonyms = (word) => {
+    fetchSynonymsAndAntonyms(word).then((data) => {
+      if (data.synonyms.length > 0 && data.antonyms.length > 0) {
         setSynAnt(data);
-      });
+        console.log("fetchSynonymsAndAntonyms", data);
+      } else {
+        handleFetchRandomWord();
+      }
+    });
   };
 
-  const getWord = () =>
-    fetch(urlWord, options)
-      .then((response) => response.json())
-      .then((data) => {
-        setWordApi(data.word);
-        setArray(data.word);
-      });
+  // Submit the word from form
+  const submitWord = (event) => {
+    event.preventDefault();
+    console.log("submitWord", inputWord, synAnt[wordMode]);
 
+    if (synAnt[wordMode].includes(inputWord)) {
+      alert("Correct!");
+      selectWordMode();
+    } else {
+      alert("Try again!");
+      console.log(synAnt[wordMode]);
+      selectWordMode();
+    }
+  };
 
   return (
     <>
-      <button onClick={() => getWord()}>Start game</button>
-      <p>Guess this word:</p>
+      {!gameStarted ? (<button onClick={handleGameStart}>Start game</button>) : null}
+      {!gameStarted ? null : (<p>Guess this word&apos;s {wordMode}:</p>)}
       {wordApi}
-      {synAnt.synonyms}
+      <form onSubmit={submitWord}>
+        <input type="text" name="query" onChange={e => setInputWord(e.target.value)} />
+        <button type="submit">Go!</button>
+      </form>
     </>
-  );
+  )
 }
 
 export default App;

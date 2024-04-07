@@ -128,7 +128,12 @@ function App() {
 
       {!wordReady || !gameStarted
         ? null
-        : (<p>Correct answers: {isCorrect}/10</p>)
+        : (
+            <>
+              <p>Correct answers: {isCorrect}</p>
+              <p>Turn: {count + 1}/10</p>
+            </>
+          )
       }
     </>
   );

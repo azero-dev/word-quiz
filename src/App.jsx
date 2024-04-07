@@ -24,6 +24,7 @@ function App() {
     return () => clearTimeout(timer);
   });
 
+  //reset user input
   const reset = () => {
     setInputWord("");
   };
@@ -96,44 +97,37 @@ function App() {
 
   return (
     <>
-      {!gameStarted ? (
-        <button onClick={handleGameStart}>Start game</button>
-      ) : null}
-
-      {!gameStarted ? null : (
-        <p>
-          Guess this word&apos;s{" "}
-          <span style={{ textDecoration: "underline" }}>{wordMode.slice(0, -1)}</span>:
-        </p>
-      )}
-
-      {!gameStarted ? null : !wordReady ? (
-        <p>Searching for complex word...</p>
-      ) : (
-        <p>{wordApi}</p>
-      )}
-
-      {!wordReady || !gameStarted ? null : (
-        <form onSubmit={submitWord}>
-          <input
-            ref={inputRef}
-            type="text"
-            name="query"
-            value={inputWord}
-            onChange={(e) => setInputWord(e.target.value)}
-          />
-          <button type="submit">Go!</button>
-        </form>
-      )}
+      {!gameStarted
+        ? <button onClick={handleGameStart}>Start game</button>
+        : !wordReady
+          ? <p>Searching for complex word...</p>
+          : null
+      }
 
       {!wordReady || !gameStarted
         ? null
-        : (
-            <>
-              <p>Correct answers: {isCorrect}</p>
-              <p>Turn: {count + 1}/10</p>
-            </>
-          )
+        :
+          <>
+            <p>
+              Guess this word&apos;s{" "}
+              <span style={{ textDecoration: "underline" }}>
+                {wordMode.slice(0, -1)}
+              </span>:
+            </p>
+            <p>{wordApi}</p>
+            <form onSubmit={submitWord}>
+              <input
+                ref={inputRef}
+                type="text"
+                name="query"
+                value={inputWord}
+                onChange={(e) => setInputWord(e.target.value)}
+              />
+              <button type="submit">Go!</button>
+            </form>
+            <p>Correct answers: {isCorrect}</p>
+            <p>Turn: {count + 1}/10</p>
+          </>
       }
     </>
   );

@@ -6,10 +6,12 @@ const options = {
 
 export const fetchRandomWord = () => 
   fetch(urlWord, options)
-    .then((response) => response.json());
+    .then((response) => response.json())
+    .catch((error) => console.error("fetchRandomWord Error: ", error));
 
 export const fetchSynonymsAndAntonyms = (word) => {
   const urlSynAnt = `https://api.api-ninjas.com/v1/thesaurus?word=${word}`;
   return fetch(urlSynAnt, options)
-    .then((response) => response.json());
+    .then((response) => response.json())
+    .catch((error) => console.error("fetchSynonymsAndAntonyms Error: ", error));
 };

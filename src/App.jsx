@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { fetchRandomWord, fetchSynonymsAndAntonyms } from "./Api";
 
@@ -9,11 +9,24 @@ function App() {
   const [wordReady, setWordReady] = useState(false);
   const [synAnt, setSynAnt] = useState({});
   const [inputWord, setInputWord] = useState("");
+  const inputRef = useRef();
+
+  // control user input focus 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0)
+
+    return () => clearTimeout(timer);
+  })
 
   const reset = () => {
     setInputWord("");
   };
 
+  // Select the word mode
   const selectWordMode = () => {
     reset();
     setWordReady(false);
@@ -22,6 +35,7 @@ function App() {
     handleFetchRandomWord();
   };
 
+  // Start the game
   const handleGameStart = () => {
     setGameStarted(true);
     selectWordMode();
@@ -53,7 +67,7 @@ function App() {
     event.preventDefault();
     // console.log("submitWord", inputWord, synAnt[wordMode]);
 
-    if (synAnt[wordMode].includes(inputWord)) {
+    if (synAnt[wordMode].includes(inputWord.toLowerCase())) {
       alert("Correct!");
       selectWordMode();
     } else {
@@ -84,8 +98,10 @@ function App() {
         : (
           <form onSubmit={submitWord}>
             <input
+              ref={inputRef}
               type="text"
               name="query"
+              value={inputWord}
               onChange={(e) => setInputWord(e.target.value)}
             />
             <button type="submit">Go!</button>

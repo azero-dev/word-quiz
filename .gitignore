@@ -25,3 +25,7 @@ dist-ssr
 
 # env
 .env
+
+#pages
+Api2.js
+App2.jsx

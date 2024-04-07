@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { fetchRandomWord, fetchSynonymsAndAntonyms } from "./Api";
+import GameBox from "./Components/GameBox.jsx";
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
@@ -106,28 +107,16 @@ function App() {
 
       {!wordReady || !gameStarted
         ? null
-        :
-          <>
-            <p>
-              Guess this word&apos;s{" "}
-              <span style={{ textDecoration: "underline" }}>
-                {wordMode.slice(0, -1)}
-              </span>:
-            </p>
-            <p>{wordApi}</p>
-            <form onSubmit={submitWord}>
-              <input
-                ref={inputRef}
-                type="text"
-                name="query"
-                value={inputWord}
-                onChange={(e) => setInputWord(e.target.value)}
-              />
-              <button type="submit">Go!</button>
-            </form>
-            <p>Correct answers: {isCorrect}</p>
-            <p>Turn: {count + 1}/10</p>
-          </>
+        : <GameBox
+            wordMode={wordMode}
+            wordApi={wordApi}
+            inputWord={inputWord}
+            setInputWord={setInputWord}
+            submitWord={submitWord}
+            count={count}
+            isCorrect={isCorrect}
+            inputRef={inputRef}
+          />
       }
     </>
   );

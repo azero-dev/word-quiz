@@ -55,7 +55,12 @@ function App() {
   // Fetch the synonyms and antonyms
   const handleFetchSynonymsAndAntonyms = (word) => {
     fetchSynonymsAndAntonyms(word).then((data) => {
-      if (data.synonyms.length > 0 && data.antonyms.length > 0 && data.synonyms[0] !== "" && data.antonyms[0] !== ""){
+      if (
+        data.synonyms.length > 0 &&
+        data.antonyms.length > 0 &&
+        data.synonyms.every(synonym => synonym !== "") &&
+        data.antonyms.every(antonym => antonym !== "")
+      ){
         setSynAnt(data);
         setWordReady(true);
         console.log("Yes, you can see the correct answer here: ", data);
@@ -102,21 +107,16 @@ function App() {
         ? <button onClick={handleGameStart}>Start game</button>
         : !wordReady
           ? <p>Searching for complex word...</p>
-          : null
-      }
-
-      {!wordReady || !gameStarted
-        ? null
-        : <GameBox
-            wordMode={wordMode}
-            wordApi={wordApi}
-            inputWord={inputWord}
-            setInputWord={setInputWord}
-            submitWord={submitWord}
-            count={count}
-            isCorrect={isCorrect}
-            inputRef={inputRef}
-          />
+          : <GameBox
+              wordMode={wordMode}
+              wordApi={wordApi}
+              inputWord={inputWord}
+              setInputWord={setInputWord}
+              submitWord={submitWord}
+              count={count}
+              isCorrect={isCorrect}
+              inputRef={inputRef}
+            />
       }
     </>
   );
